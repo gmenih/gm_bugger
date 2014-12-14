@@ -3,6 +3,7 @@ body,html
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	font-family: "Sans Narrow";
 }
 *
 {
@@ -12,7 +13,6 @@ body,html
 
 .leftMenu
 {
-	font-family: "Sans Narrow";
 	min-width: 150pt;
 	display: block;
 	height: 100%;
@@ -128,8 +128,6 @@ body,html
 	width: 80%;
 	display: block;
 	font-size: 25pt;
-
-	font-family: "Sans Narrow";
 }
 .titleRowRight
 {
@@ -147,7 +145,6 @@ body,html
 	width: 100%;
 	line-height: 30pt;
 	top: -webkit-calc(50% - 15pt);
-	font-family: "Sans Narrow";
 	font-size: 25pt;
 	color: #424242;
 	opacity: 0.4;
@@ -165,7 +162,6 @@ body,html
 	margin: 6pt auto;
 	display: block;
 	height: 50pt;
-	font-family: "Sans Narrow";
 	border-left: 3pt solid #2979FF;
 }
 .taskItemLeft
@@ -259,6 +255,23 @@ body,html
 	visibility: hidden;
 	-webkit-transform: rotate(-40deg);
 }
+
+.toastMessage
+{
+	padding: 4pt 6pt;
+	background: #212121;
+	color: #f5f5f5;
+	opacity: 0.8;
+	display: block;
+	position: absolute;
+	bottom: 30pt;
+	text-align: center;
+	border-radius: 7pt;
+	left: -webkit-calc(50% - 52pt);
+	z-index: 1000;
+	cursor: pointer;
+}
+
 @-webkit-keyframes opacityOut
 {
 	from
