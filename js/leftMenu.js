@@ -52,7 +52,7 @@ $("#leftMenuList").children().on("click", function(){
 	// set index to index of clicked project
 	selectedIndex = $("#leftMenuList").children().index(this);
 	// update notification count for project (should I omit this, since it's set when adding projects?)
-	$(this).attr("data-notifications", projects[selectedIndex].getNot()); 
+	$(this).attr("data-notifications", projects[selectedIndex].getNotifications()); 
 	console.log("Selected index set to", selectedIndex);
 	// move item selector to currently selected item
 	$("#menuItemSelector").css("top", $(this).position().top);
