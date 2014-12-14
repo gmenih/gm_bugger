@@ -1,7 +1,19 @@
 
+/**
+ * List of projects that the program contains and are displayed in the left menu.
+ * @type {EventedArray}
+ */
 var projects = new EventedArray();
-
-
+/**
+ * Index of currently selected item in the left menu.
+ * @type {Number}
+ */
+var selectedIndex = -1;
+/**
+ * Update left menu whenever an item is added to the projects array.
+ * @param  {Project}
+ * @return {void}
+ */
 projects.on("add", function(item)
 {
 	var elem = $("<li>", {"text": item.title, "data-notifications": item.getNot(), "class":"leftMenuItem"});
@@ -13,18 +25,16 @@ projects.on("add", function(item)
 		console.log("Task", task.title, "added.");
 	})
 });
+// Adding sample projects - to be fixed later.
 projects.push(new Project("Buggy"));
 projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-projects.push(new Project("Plagiat detektor"));
-var selectedIndex = -1;
 
+/**
+ * Update the project view, to show the currently selected projects,
+ * whenever a project is clicked in the left menu.
+ * @param  {[type]}
+ * @return {void}
+ */
 $("#leftMenuList").children().on("click", function(){
 	if(selectedIndex < 0){
 		$("#menuItemSelector").css("visibility", "visible");
