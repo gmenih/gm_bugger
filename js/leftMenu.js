@@ -16,12 +16,17 @@ var selectedIndex = -1;
  */
 projects.on("add", function(item)
 {
-	var elem = $("<li>", {"text": item.title, "data-notifications": item.getNot(), "class":"leftMenuItem"});
+	// constructed item menu element
+	var elem = $("<li>", {"text": item.title, "data-notifications": item.getNotifications(), "class":"leftMenuItem"});
+	// adding element to menuItemsList
 	$("#leftMenuList").append(elem);
 	console.log(item);
 	console.log("Menu item", item.title, "added.");
+	/**
+	 * Event handler for adding a task to a project, to update the notification count (for now)
+	 */
 	item.tasks.on("add", function(task){
-		elem.attr("data-notifications", item.getNot());
+		elem.attr("data-notifications", item.getNotifications());
 		console.log("Task", task.title, "added.");
 	})
 });
@@ -36,17 +41,23 @@ projects.push(new Project("Plagiat detektor"));
  * @return {void}
  */
 $("#leftMenuList").children().on("click", function(){
+	//if selectedIndex isn't set yet, display the item selector
 	if(selectedIndex < 0){
 		$("#menuItemSelector").css("visibility", "visible");
+		// content is not displayed.
+		$(".noContent").remove();
 	} else {
 		$(".menuItemSelected").removeClass("menuItemSelected");
 	}
+	// set index to index of clicked project
 	selectedIndex = $("#leftMenuList").children().index(this);
+	// update notification count for project (should I omit this, since it's set when adding projects?)
 	$(this).attr("data-notifications", projects[selectedIndex].getNot()); 
 	console.log("Selected index set to", selectedIndex);
+	// move item selector to currently selected item
 	$("#menuItemSelector").css("top", $(this).position().top);
+	// make currently selected item prettys
 	$(this).addClass("menuItemSelected");
-	$(".noContent").remove();
 	$("#projectTitle").text(projects[selectedIndex].title)
 })
 projects[0].tasks.push(new Task("test"));
