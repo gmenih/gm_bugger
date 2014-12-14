@@ -60,6 +60,10 @@ $("#leftMenuList").children().on("click", function(){
 	$(this).addClass("menuItemSelected");
 	$("#projectTitle").text(projects[selectedIndex].title)
 })
+
+$("#tasksList").children().on("click", function(){
+	console.log($(this));
+})
 projects[0].tasks.push(new Task("test"));
 
 $("#addTask").on("click", function(){

@@ -221,18 +221,19 @@ body,html
 	overflow: hidden;
 	-webkit-transition: background 220ms;
 }
-.taskFinish:hover
+.taskFinish:hover, .taskItem:hover .taskFinish
 {
 	background: #2979FF;
 }
-.taskFinish:hover .b1{
-	visibility: visible;
-	-webkit-animation: b1Animation 220ms;
-}
-.taskFinish:hover .b2
+.taskFinish:hover .b1, .taskItem:hover .taskFinish .b1
 {
 	visibility: visible;
-	-webkit-animation: b2Animation 220ms;
+	-webkit-animation: b1Incoming 220ms;
+}
+.taskFinish:hover .b2, .taskItem:hover .taskFinish .b2
+{
+	visibility: visible;
+	-webkit-animation: b2Incoming 220ms;
 }
 .b1
 {
@@ -270,7 +271,7 @@ body,html
 	}
 }
 
-@-webkit-keyframes b1Animation
+@-webkit-keyframes b1Incoming
 {
 	from
 	{
@@ -285,7 +286,7 @@ body,html
 		width: 17pt;
 	}
 }
-@-webkit-keyframes b2Animation
+@-webkit-keyframes b2Incoming
 {
 	from
 	{
