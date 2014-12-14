@@ -1,0 +1,14 @@
+@font-face
+{
+	font-family: "Sans Narrow";
+	font-style: normal;
+  	font-weight: normal;
+	src: url(../fonts/PT_Sans-Narrow-Web-Regular.ttf) format('truetype');;
+}
+@font-face
+{
+	font-family: "Sans Narrow";
+	font-style: normal;
+  	font-weight: bold;
+	src: url(../fonts/PT_Sans-Narrow-Web-Bold.ttf) format('truetype');;
+}

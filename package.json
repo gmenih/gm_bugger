@@ -1,0 +1,18 @@
+{
+  "name": "nw-bug-reporter",
+  "main": "frontPage.html",
+  "description": "NW-Bug Reporter",
+  "version": "0.0.4",
+   "window": {
+   	"width": 870,
+   	"height": 550,
+    "title": "NW-Bug Reporter",
+    "toolbar": true,
+    "resizable": true
+  },
+  "maintainers":[ {
+	   "name": "Gregor Menih",
+	   "email": "gmenih@gmail.com",
+	   "web": "http://facebook.com/gmenih"
+	}]
+}
