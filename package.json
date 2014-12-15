@@ -14,5 +14,8 @@
 	   "name": "Gregor Menih",
 	   "email": "gmenih@gmail.com",
 	   "web": "http://facebook.com/gmenih"
-	}]
+	}],
+  "dependencies":[
+    "array-events": "^0.1.3-beta"
+  ]
 }
