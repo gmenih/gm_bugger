@@ -26,7 +26,7 @@ $("#tasksList").children().on("click", function(){
 			}
 		})	
 	});
-})	
+})
 
 /**
  * Timer function, which waits 5 seconds before finally removing all tasks in hiddenTasks array.

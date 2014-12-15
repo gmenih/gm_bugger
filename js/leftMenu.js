@@ -30,9 +30,7 @@ projects.on("add", function(item)
 		console.log("Task", task.title, "added.");
 	})
 });
-// Adding sample projects - to be fixed later.
-projects.push(new Project("Buggy"));
-projects.push(new Project("Plagiat detektor"));
+
 
 /**
  * Update the project view, to show the currently selected projects,
@@ -40,12 +38,12 @@ projects.push(new Project("Plagiat detektor"));
  * @param  {[type]}
  * @return {void}
  */
-$("#leftMenuList").children().on("click", function(){
+$("#leftMenuList").on("click", ".leftMenuItem", function(){
 	//if selectedIndex isn't set yet, display the item selector
 	if(selectedIndex < 0){
 		$("#menuItemSelector").css("visibility", "visible");
-		// content is not displayed.
-		$(".noContent").remove();
+		$(".projectView").css("visibility", "visible");
+		$(".noContent").css("visibility", "hidden");
 	} else {
 		$(".menuItemSelected").removeClass("menuItemSelected");
 	}
@@ -60,8 +58,8 @@ $("#leftMenuList").children().on("click", function(){
 	$(this).addClass("menuItemSelected");
 	$("#projectTitle").text(projects[selectedIndex].title)
 })
-projects[0].tasks.push(new Task("test"));
+// Adding sample projects - to be fixed later.
+projects.push(new Project("Buggy"));
+projects.push(new Project("Plagiat detektor"));
 
-$("#addTask").on("click", function(){
-	projects[selectedIndex].tasks.push(new Task("t1"));
-})
+projects[0].tasks.push(new Task("test"));
