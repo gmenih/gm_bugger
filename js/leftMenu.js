@@ -63,6 +63,12 @@ $("#leftMenuList").on("click", ".leftMenuItem", function(){
  * on click #addTask add new Task(title, type, date) to project[selectedIndex], update leftMenu, updateProject view.
  */
 
+$("#addProject").on("click", function(){
+	projects.push(new Project("Neimenovan projekt"));
+	$("#leftMenuList").children().eq(projects.length - 1).trigger("click");
+	$("#changeTitle").trigger("click");
+})
+
 
 // Adding sample projects - to be fixed later.
 projects.push(new Project("Buggy"));
