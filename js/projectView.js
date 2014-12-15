@@ -52,7 +52,7 @@ $(".appContent").on("click", "#undoTaskRemove", function(){ // if toast message 
  	var titleEdit = $("<input>", 
  		{"type":"text", 
  		"value":projects[selectedIndex].title, 
- 		"class":"titleEdit"}).prependTo($(this).parent());
+ 		"class":"titleEdit", "maxlength": 32}).prependTo($(this).parent());
  	titleEdit.focus().select();
  	titleEdit.on("keyup", function(e){
  		if(e.keyCode == 13){

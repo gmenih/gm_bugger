@@ -1,4 +1,3 @@
-
 /**
  * List of projects that the program contains and are displayed in the left menu.
  * @type {EventedArray}
@@ -9,6 +8,7 @@ var projects = new EventedArray();
  * @type {Number}
  */
 var selectedIndex = -1;
+
 /**
  * Update left menu whenever an item is added to the projects array.
  * @param  {Project}
@@ -68,10 +68,3 @@ $("#addProject").on("click", function(){
 	$("#leftMenuList").children().eq(projects.length - 1).trigger("click");
 	$("#changeTitle").trigger("click");
 })
-
-
-// Adding sample projects - to be fixed later.
-projects.push(new Project("Buggy"));
-projects.push(new Project("Plagiat detektor"));
-
-projects[0].tasks.push(new Task("test"));

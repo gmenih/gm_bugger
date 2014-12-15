@@ -1,4 +1,4 @@
-var EventedArray = require("./array-events");
+
 var Project = function(projectTitle)
 {
 	this.title = projectTitle;
@@ -21,11 +21,11 @@ Project.prototype.getNotifications = function(){
 	return this.tasks.length;
 }
 
-
 /**
  * Class for tasks.
  * @param {[type]}
  */
-var Task = function(taskTitle){
+var Task = function(taskTitle, taskType){
 	this.title = taskTitle;
+	this.type = taskType;
 }
