@@ -15,7 +15,8 @@
 	   "email": "gmenih@gmail.com",
 	   "web": "http://facebook.com/gmenih"
 	}],
-  "dependencies":[
+  "dependencies":{
     "array-events": "^0.1.3-beta"
-  ]
+  }
+    
 }
