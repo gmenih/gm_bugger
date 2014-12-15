@@ -1,182 +1,114 @@
-/**
- * NodeJs requires.
- */
-var EventedArray = require("array-events");
+var diskdb = require('diskdb');
+
+var db = diskdb.connect('C:/Users/Grega/Documents/Gbase', ['projects']);
 
 /**
- * List of projects that the program contains and are displayed in the left menu.
- * @type {EventedArray}
- */
-var projects = new EventedArray();
-
-/**
- * Index of currently selected item in the left menu.
- * @type {Number}
- */
-var selectedIndex = -1;
-
-/**
- * Timer reference, to cancel removal timer, if items are restored.
- */
-var removalTimer;
-
-/**
- * Tasks hidden from display.
+ * List of existing projects.
  * @type {Array}
  */
-var hiddenTasks = [];
+var projects = db.projects.find();
+
 /**
- * Update left menu whenever an item is added to the projects array.
- * @param  {Project}
- * @return {void}
+ * ID of the element selected in the leftMenuList
+ * @type {string}
  */
-projects.on("add", function(item) {
-	// constructed item menu element
-	var elem = $("<li>", {
-		"text": item.title,
-		"data-notifications": item.tasks.length,
-		"class": "leftMenuItem"
-	});
-	// adding element to menuItemsList
-	$("#leftMenuList").append(elem);
-	console.log(item);
-	console.log("Menu item", item.title, "added.");
-	/**
-	 * Event handler for adding a task to a project, to update the notification count (for now)
-	 */
-	item.tasks.on("add", function(task) {
-		elem.attr("data-notifications", item.tasks.length);
-		console.log("Task", task.title, "added.");
-	})
-});
-/**
- * Update the project view, to show the currently selected projects,
- * whenever a project is clicked in the left menu.
- * @param  {[type]}
- * @return {void}
- */
+var selectedId = null;
+
+// fill menu with exsisting projects
+projects.forEach(addProjectToMenu);
+
+// when item in menu is clicked
 $("#leftMenuList").on("click", ".leftMenuItem", function() {
-	//if selectedIndex isn't set yet, display the item selector
-	if (selectedIndex < 0) {
-		$("#menuItemSelector").css("visibility", "visible");
-		$(".projectView").css("visibility", "visible");
-		$(".noContent").css("visibility", "hidden");
-	} else {
-		$(".menuItemSelected").removeClass("menuItemSelected");
-	}
-	// set index to index of clicked project
-	selectedIndex = $("#leftMenuList").children().index(this);
-	// update notification count for project (should I omit this, since it's set when adding projects?)
-	$(this).attr("data-notifications", projects[selectedIndex].tasks.length);
-	console.log("Selected index set to", selectedIndex);
-	// move item selector to currently selected item
-	$("#menuItemSelector").css("top", $(this).position().top);
-	// make currently selected item prettys
-	$(this).addClass("menuItemSelected");
-	$("#projectTitle").text(projects[selectedIndex].title)
-})
-
-$("#addProject").on("click", function() {
-	// add new project to 
-	projects.push(new Project("Neimenovan projekt"));
-	$("#leftMenuList").children().eq(projects.length - 1).trigger("click");
-	$("#changeTitle").trigger("click");
-})
-$("#tasksList").children().on("click", function() {
-	$(this).hide(420, function() {
-		var toast; // toast message
-		hiddenTasks.push(this); // add clicked task to array
-		if ($("#undoTaskRemove").length === 0) { // if toast not yet displayed, make it happen
-			toast = $("<div>", {
-				"text": "Item removed. Undo",
-				"class": "toastMessage",
-				"id": "undoTaskRemove"
-			});
-			toast.appendTo(".appContent")
-			console.log("Toast message sent.");
+		// if no item is selected yet
+		if (selectedId == null) {
+			$("#menuItemSelector").css("visibility", "visible");
+			$(".noContent").css("visibility", "hidden");
+			$(".projectView").css("visibility", "visible");
+		} else {
+			$(".menuItemSelected").removeClass("menuItemSelected");
 		}
-		removalTimer = timerSetup(toast); // start timer
-	});
-})
-$(".appContent").on("click", "#undoTaskRemove", function() { // if toast message clicked
-		clearTimeout(removalTimer); // restart timer
-		removalTimer = timerSetup(this);
-		// show last task
-		$(hiddenTasks[hiddenTasks.length - 1]).show(420);
-		hiddenTasks.pop(); // remove last task from list
-		if (hiddenTasks.length < 1) {
-			$(this).remove();
-			clearTimeout(removalTimer);
-		}
+		var clicked = $(this);
+		selectedId = clicked.attr("id");
+		$("#menuItemSelector").css("top", clicked.position().top);
+		clicked.addClass("menuItemSelected");
+		var project = db.projects.findOne({
+			"_id": selectedId
+		});
+		updateProjectView(project);
 	})
-	/**
-	 * Timer function, which waits 5 seconds before finally removing all tasks in hiddenTasks array.
-	 */
-function timerSetup(toast) {
-	return setTimeout(function() {
-		console.log("after", toast);
-		$(toast).animate({
-			"opacity": 0
-		}, 420, "linear", function() {
-			$(toast).remove();
-			hiddenTasks.forEach(function(task) {
-				task.remove();
-			})
-		})
-	}, 5000);
-}
-
-$("#changeTitle").on("click", function() {
-	var projectTitle = $("#projectTitle");
-	var editButton = $(this);
-	projectTitle.hide();
-	editButton.hide();
+	// add project
+$("#addProject").on("click", function() {
+	if (selectedId == null) {
+		$("#menuItemSelector").css("visibility", "visible");
+		$(".noContent").css("visibility", "hidden");
+		$(".projectView").css("visibility", "visible");
+	}
+	var project = {
+		title: "Neimenovan projekt",
+		tasks: [],
+		finishedTasks: []
+	};
+	var pTitle = $("#projectTitle").hide();
+	var cTitle = $("#changeTitle").hide();
 	var titleEdit = $("<input>", {
 		"type": "text",
-		"value": projects[selectedIndex].title,
-		"class": "titleEdit",
-		"maxlength": 32
-	}).prependTo($(this).parent());
-	titleEdit.focus().select();
+		"value": project.title,
+		"class": "titleEdit"
+	}).prependTo(".titleRow .titleRowLeft");
+	titleEdit.select();
 	titleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
-			projects[selectedIndex].title = titleEdit.val();
+			project.title = titleEdit.val();
+			var saved = db.projects.save(project);
+			var menuItem = addProjectToMenu(saved);
+			pTitle.show().text(saved.title);
+			cTitle.show();
 			titleEdit.remove();
-			projectTitle.text(projects[selectedIndex].title).show();
-			editButton.show();
-			$("#leftMenuList").children().eq(selectedIndex).text(projects[selectedIndex].title);
+			$("#menuItemSelector").css("top", menuItem.position().top)
+			menuItem.addClass("menuItemSelected");
 		}
 	})
-});
+})
 
-/* This could probably be removed and replaced with an Object */
-var Project = function(projectTitle) {
-		this.title = projectTitle;
-		this.tasks = new EventedArray();
-		this.finishedTasks = new EventedArray();
-	}
-	/**
-	 * Class for tasks.
-	 * @param {[type]}
-	 */
-var Task = function(taskTitle, taskType) {
-	this.title = taskTitle;
-	this.type = taskType;
+$("#changeTitle").on("click", function() {
+	var pTitle = $("#projectTitle").hide();
+	var cTitle = $("#changeTitle").hide();
+	var titleEdit = $("<input>", {
+		"type": "text",
+		"value": pTitle.text(),
+		"class": "titleEdit"
+	}).prependTo(".titleRow .titleRowLeft");
+	titleEdit.select();
+	titleEdit.on("keyup", function(e) {
+		if (e.keyCode == 13) {
+			var updated = db.projects.update({
+				_id: selectedId
+			}, {
+				title: titleEdit.val()
+			});
+			if(updated.updated == 1){
+				pTitle.text(titleEdit.val());
+				$("#"+selectedId).text(titleEdit.val());
+			}
+			pTitle.show();
+			cTitle.show();
+			titleEdit.remove();
+		}
+	})
+})
+
+function updateProjectView(project) {
+	$("#projectTitle").text(project.title);
 }
 
-/** WINDOW EVNETS */
-var win = require('nw.gui').Window.get();
-var db = require('diskdb');
-win.on("close", function() {
-	db.connect('C:/Users/Grega/Documents/Gbase', ['projects']);
-	db.projects.save(projects)
-	this.hide();
-	this.close(true);
-});
-win.on("loaded", function() {
-	var disk = db.connect('C:/Users/Grega/Documents/Gbase', ['projects']);
-	disk.projects.find().forEach(function(p){
-		projects.push(new Project(p.title));
-	})
-
-})
+function addProjectToMenu(project) {
+	var menuItem = $("<li>", {
+		"text": project.title,
+		"data-notification": project.tasks.length,
+		"id": project._id,
+		"class": "leftMenuItem"
+	});
+	// add item
+	menuItem.appendTo("#leftMenuList");
+	return menuItem;
+}
