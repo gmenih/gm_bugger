@@ -27,7 +27,32 @@ body,html
 	text-transform: uppercase;
 	text-align: center;
 	padding: 6pt;
+	display: relative;
+
 }
+#addProject
+{
+	position: absolute;
+	color: #f5f5f5;
+	right: -7pt;
+	top: 3pt;
+	font-size: 30pt;
+	line-height: 19pt;
+	text-align: center;
+	cursor: pointer;
+	background: #2196F3;
+	width: 20pt;
+	height: 20pt;
+	border: 1pt #0D47A1 solid;
+	border-radius: 20pt;
+	z-index: 1000;
+	-webkit-transition: transform 320ms;
+}
+#addProject:hover
+{
+	-webkit-transform: scale(1.2);
+}
+
 .leftMenuItems
 {
 	list-style: none;
@@ -48,7 +73,7 @@ body,html
 	color: #EEEEEE;
 }
 
-.leftMenuItem[data-notifications]:before{
+.leftMenuItem[data-notifications]:after{
 	content: attr(data-notifications);
 	width: 15pt;
 	height: 15pt;
@@ -60,7 +85,7 @@ body,html
 	float: right;
 	border: 1px #E57373 solid;
 }
-.leftMenuItem[data-notifications="0"]:before
+.leftMenuItem[data-notifications="0"]:after
 {
 	display: none;
 }
@@ -81,7 +106,7 @@ body,html
 	left: 100%;
 	top: 0;
 	visibility: hidden;
-	z-index: 1000;
+	z-index: 999;
 }
 .appContent
 {
@@ -106,6 +131,34 @@ body,html
 	display: block;
 	padding: 7pt 7pt 7pt 21pt;
 	color: #212121;
+}
+#changeTitle
+{
+	opacity: 0;
+	margin-left: 7pt;
+	font-family: "entypo";
+	cursor: pointer;
+	-webkit-transition: opacity 420ms, color 420ms;
+}
+.titleEdit
+{
+	font-size: 25pt;
+	padding: 0;
+	margin: 0;
+	font-family: "Sans Narrow";
+	background: #f5f5f5;
+	outline: none;
+	border: none;
+	display: inline-block;
+
+}
+.titleRow:hover #changeTitle
+{
+	opacity: .9;
+}
+#changeTitle:hover
+{
+	color: #2979FF;
 }
 .titleRow:after
 {

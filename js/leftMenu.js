@@ -58,6 +58,12 @@ $("#leftMenuList").on("click", ".leftMenuItem", function(){
 	$(this).addClass("menuItemSelected");
 	$("#projectTitle").text(projects[selectedIndex].title)
 })
+/**
+ * on click #addProject add new Project(title) to projects, update leftMenu, update projectView.
+ * on click #addTask add new Task(title, type, date) to project[selectedIndex], update leftMenu, updateProject view.
+ */
+
+
 // Adding sample projects - to be fixed later.
 projects.push(new Project("Buggy"));
 projects.push(new Project("Plagiat detektor"));

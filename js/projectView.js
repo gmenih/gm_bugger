@@ -4,7 +4,7 @@ var hiddenTasks = []; // list of hidden tasks not yet removed
  * displays a toast message for 5 seconds before fully removing
  * the task.
  */
-var removalTimer;
+ var removalTimer;
  console.log("someid", $("#someId").length);
  $("#tasksList").children().on("click", function(){
  	$(this).hide(420, function(){
@@ -43,3 +43,24 @@ $(".appContent").on("click", "#undoTaskRemove", function(){ // if toast message 
  		})
  	}, 5000);
  }
+
+ $("#changeTitle").on("click", function(){
+ 	var projectTitle = $("#projectTitle");
+ 	var editButton = $(this);
+ 	projectTitle.hide();
+ 	editButton.hide();
+ 	var titleEdit = $("<input>", 
+ 		{"type":"text", 
+ 		"value":projects[selectedIndex].title, 
+ 		"class":"titleEdit"}).prependTo($(this).parent());
+ 	titleEdit.focus().select();
+ 	titleEdit.on("keyup", function(e){
+ 		if(e.keyCode == 13){
+ 			projects[selectedIndex].title = titleEdit.val();
+ 			titleEdit.remove();
+ 			projectTitle.text(projects[selectedIndex].title).show();
+ 			editButton.show();
+ 			$("#leftMenuList").children().eq(selectedIndex).text(projects[selectedIndex].title);
+ 		}
+ 	})
+ });
