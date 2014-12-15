@@ -39,7 +39,6 @@ $("#leftMenuList").on("click", ".leftMenuItem", function() {
 	// add project
 $("#addProject").on("click", function() {
 	if (selectedId == null) {
-		$("#menuItemSelector").css("visibility", "visible");
 		$(".noContent").css("visibility", "hidden");
 		$(".projectView").css("visibility", "visible");
 	}
@@ -58,6 +57,9 @@ $("#addProject").on("click", function() {
 	titleEdit.select();
 	titleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
+			if(selectedId == null){
+				$("#menuItemSelector").css("visibility", "visible");
+			}
 			project.title = titleEdit.val();
 			var saved = db.projects.save(project);
 			var menuItem = addProjectToMenu(saved);
@@ -66,6 +68,17 @@ $("#addProject").on("click", function() {
 			titleEdit.remove();
 			$("#menuItemSelector").css("top", menuItem.position().top)
 			menuItem.addClass("menuItemSelected");
+		} else if(e.keyCode == 27){
+			pTitle.show();
+			cTitle.show();
+			titleEdit.remove();
+			if(selectedId != null){
+				updateProjectView(db.projects.findOne({_id:selectedId}));
+			} else {
+				$(".noContent").css("visibility", "visible");
+				$(".projectView").css("visibility", "hidden");
+				$("#menuItemSelector").css("visibility", "hidden");
+			}
 		}
 	})
 })
@@ -90,6 +103,10 @@ $("#changeTitle").on("click", function() {
 				pTitle.text(titleEdit.val());
 				$("#"+selectedId).text(titleEdit.val());
 			}
+			pTitle.show();
+			cTitle.show();
+			titleEdit.remove();
+		} else if(e.keyCode == 27){
 			pTitle.show();
 			cTitle.show();
 			titleEdit.remove();
