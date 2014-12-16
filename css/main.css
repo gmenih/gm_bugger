@@ -202,6 +202,23 @@ body,html
 	width: 100%;
 	display: block;
 }
+.addTask
+{
+	width: 90%;
+	margin: 4pt auto;
+	text-align: center;
+	font-size: 14pt;
+	cursor: pointer;
+	-webkit-transition: color 420ms;
+}
+.addTask:hover
+{
+	color: #2979FF;
+}
+.addTask span
+{
+	font-family: "entypo";
+}
 .taskItem
 {
 	width: 90%;
@@ -229,6 +246,7 @@ body,html
 	margin: 4pt 2pt 4pt 7pt;
 	display: inline-block;
 	color: #BDBDBD;
+	text-transform: uppercase;
 	background: rgba(255,255,255,.15);
 }
 .taskTitle
@@ -236,6 +254,19 @@ body,html
 	padding: 6pt 3pt;
 	display: inline-block;
 	color: #f5f5f5;
+	font-size: 12pt;
+}
+.taskTitleEdit
+{
+	font-size: 12pt;
+	padding: 6pt 3pt;
+	display: inline-block;
+	color: #f5f5f5;
+	font-family: "Sans Narrow";
+	border: none;
+	outline: none;
+	background: transparent;
+	width: 70%;
 }
 .taskDate
 {

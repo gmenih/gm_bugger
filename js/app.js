@@ -57,7 +57,7 @@ $("#addProject").on("click", function() {
 	titleEdit.select();
 	titleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
-			if(selectedId == null){
+			if (selectedId == null) {
 				$("#menuItemSelector").css("visibility", "visible");
 			}
 			project.title = titleEdit.val();
@@ -68,12 +68,14 @@ $("#addProject").on("click", function() {
 			titleEdit.remove();
 			$("#menuItemSelector").css("top", menuItem.position().top)
 			menuItem.addClass("menuItemSelected");
-		} else if(e.keyCode == 27){
+		} else if (e.keyCode == 27) {
 			pTitle.show();
 			cTitle.show();
 			titleEdit.remove();
-			if(selectedId != null){
-				updateProjectView(db.projects.findOne({_id:selectedId}));
+			if (selectedId != null) {
+				updateProjectView(db.projects.findOne({
+					_id: selectedId
+				}));
 			} else {
 				$(".noContent").css("visibility", "visible");
 				$(".projectView").css("visibility", "hidden");
@@ -99,19 +101,50 @@ $("#changeTitle").on("click", function() {
 			}, {
 				title: titleEdit.val()
 			});
-			if(updated.updated == 1){
+			if (updated.updated == 1) {
 				pTitle.text(titleEdit.val());
-				$("#"+selectedId).text(titleEdit.val());
+				$("#" + selectedId).text(titleEdit.val());
 			}
 			pTitle.show();
 			cTitle.show();
 			titleEdit.remove();
-		} else if(e.keyCode == 27){
+		} else if (e.keyCode == 27) {
 			pTitle.show();
 			cTitle.show();
 			titleEdit.remove();
 		}
 	})
+})
+
+$("#addTask").on("click", function() {
+	var d = new Date();
+	var dateString = d.getDate() + "." + (d.getMonth() + 1) + "." + d.getFullYear();
+	var task = {
+		title: "New task",
+		type: "todo",
+		date: dateString
+	};
+	// this is messy.. angularJs imba
+	var taskItemDate = $("<div>", {"class":"taskItemRow", "html": $("<span>", {"class":"taskDate", "text": task.date})});
+	var taskItemRow = $("<div>", {"class":"taskItemRow"});
+	var taskType = $("<span>", {"class":"taskType", "text":task.type}).appendTo(taskItemRow);
+	var taskTitleEdit = $("<input>", {"type":"text", "value":task.title, "class":"taskTitleEdit"}).appendTo(taskItemRow);
+	var taskItemLeft = $("<div>", {"class":"taskItemLeft", "html":taskItemRow});
+	taskItemLeft.append(taskItemDate);
+	var taskItem = $("<div>", {"class":"taskItem", "html":taskItemLeft});
+	taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
+	$("#addTask").after(taskItem);
+	taskTitleEdit.select();
+	taskTitleEdit.on("keyup", function(e){
+		if(e.keyCode == 13){
+			var title = taskTitleEdit.val();
+			task.title = title;
+			var taskTitle = $("<span>", {"class":"taskTitle", "text":task.title}).appendTo(taskItemRow);
+			taskTitleEdit.remove();
+			var currItem = db.projects.findOne({_id: selectedId});
+			db.projects.update({_id : selectedId}, { tasks: [task].concat(currItem.tasks)});
+		}
+	});
 })
 
 function updateProjectView(project) {
