@@ -54,6 +54,7 @@ $("#addProject").on("click", function() {
 		"value": project.title,
 		"class": "titleEdit"
 	}).prependTo(".titleRow .titleRowLeft");
+	$("#tasksList").empty();
 	titleEdit.select();
 	titleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
@@ -125,30 +126,97 @@ $("#addTask").on("click", function() {
 		date: dateString
 	};
 	// this is messy.. angularJs imba
-	var taskItemDate = $("<div>", {"class":"taskItemRow", "html": $("<span>", {"class":"taskDate", "text": task.date})});
-	var taskItemRow = $("<div>", {"class":"taskItemRow"});
-	var taskType = $("<span>", {"class":"taskType", "text":task.type}).appendTo(taskItemRow);
-	var taskTitleEdit = $("<input>", {"type":"text", "value":task.title, "class":"taskTitleEdit"}).appendTo(taskItemRow);
-	var taskItemLeft = $("<div>", {"class":"taskItemLeft", "html":taskItemRow});
+	var taskItemDate = $("<div>", {
+		"class": "taskItemRow",
+		"html": $("<span>", {
+			"class": "taskDate",
+			"text": task.date
+		})
+	});
+	var taskItemRow = $("<div>", {
+		"class": "taskItemRow"
+	});
+	var taskType = $("<span>", {
+		"class": "taskType",
+		"text": task.type
+	}).appendTo(taskItemRow);
+	var taskTitleEdit = $("<input>", {
+		"type": "text",
+		"value": task.title,
+		"class": "taskTitleEdit"
+	}).appendTo(taskItemRow);
+	var taskItemLeft = $("<div>", {
+		"class": "taskItemLeft",
+		"html": taskItemRow
+	});
 	taskItemLeft.append(taskItemDate);
-	var taskItem = $("<div>", {"class":"taskItem", "html":taskItemLeft});
+	var taskItem = $("<div>", {
+		"class": "taskItem",
+		"html": taskItemLeft
+	});
 	taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
-	$("#addTask").after(taskItem);
+	$("#tasksList").append(taskItem);
 	taskTitleEdit.select();
-	taskTitleEdit.on("keyup", function(e){
-		if(e.keyCode == 13){
+	taskTitleEdit.on("keyup", function(e) {
+		if (e.keyCode == 13) {
 			var title = taskTitleEdit.val();
 			task.title = title;
-			var taskTitle = $("<span>", {"class":"taskTitle", "text":task.title}).appendTo(taskItemRow);
+			var taskTitle = $("<span>", {
+				"class": "taskTitle",
+				"text": task.title
+			}).appendTo(taskItemRow);
 			taskTitleEdit.remove();
-			var currItem = db.projects.findOne({_id: selectedId});
-			db.projects.update({_id : selectedId}, { tasks: [task].concat(currItem.tasks)});
+			var currItem = db.projects.findOne({
+				_id: selectedId
+			});
+			db.projects.update({
+				_id: selectedId
+			}, {
+				tasks: [task].concat(currItem.tasks)
+			});
+		} else if (e.keyCode == 27) {
+			taskItem.remove();
 		}
 	});
 })
 
 function updateProjectView(project) {
 	$("#projectTitle").text(project.title);
+	if (project.tasks.length > 0) {
+		project.tasks.forEach(function(task) {
+			var taskItemDate = $("<div>", {
+				"class": "taskItemRow",
+				"html": $("<span>", {
+					"class": "taskDate",
+					"text": task.date
+				})
+			});
+			var taskItemRow = $("<div>", {
+				"class": "taskItemRow"
+			});
+			var taskType = $("<span>", {
+				"class": "taskType",
+				"text": task.type
+			}).appendTo(taskItemRow);
+			var taskTitle = $("<span>", {
+				"class": "taskTitle",
+				"text": task.title
+			}).appendTo(taskItemRow);
+			var taskItemLeft = $("<div>", {
+				"class": "taskItemLeft",
+				"html": taskItemRow
+			});
+			taskItemLeft.append(taskItemDate);
+			var taskItem = $("<div>", {
+				"class": "taskItem",
+				"html": taskItemLeft
+			});
+			taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
+			$("#tasksList").append(taskItem);
+		})
+	} else {
+		$("#tasksList").empty();
+	}
 }
 
 function addProjectToMenu(project) {
