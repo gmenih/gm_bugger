@@ -200,6 +200,8 @@ body,html
 .tasksList
 {
 	width: 100%;
+	height: -webkit-calc(100% - 72pt);
+	overflow-y: scroll;
 	display: block;
 }
 .addTask

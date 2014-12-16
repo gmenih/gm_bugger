@@ -56,8 +56,9 @@ $("#addProject").on("click", function() {
 	}).prependTo(".titleRow .titleRowLeft");
 	$("#tasksList").empty();
 	titleEdit.select();
-	titleEdit.on("keyup", function(e) {
-		if (e.keyCode == 13) {
+	titleEdit.on("keyup blur", function(e) {
+		console.log(e);
+		if (e.keyCode == 13 || e.type === "blur") {
 			if (selectedId == null) {
 				$("#menuItemSelector").css("visibility", "visible");
 			}
@@ -67,7 +68,8 @@ $("#addProject").on("click", function() {
 			pTitle.show().text(saved.title);
 			cTitle.show();
 			titleEdit.remove();
-			$("#menuItemSelector").css("top", menuItem.position().top)
+			$("#menuItemSelector").css("top", menuItem.position().top);
+			$(".menuItemSelected").removeClass("menuItemSelected");
 			menuItem.addClass("menuItemSelected");
 		} else if (e.keyCode == 27) {
 			pTitle.show();
@@ -155,7 +157,7 @@ $("#addTask").on("click", function() {
 		"html": taskItemLeft
 	});
 	taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
-	$("#tasksList").append(taskItem);
+	$("#tasksList").prepend(taskItem);
 	taskTitleEdit.select();
 	taskTitleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
@@ -174,6 +176,7 @@ $("#addTask").on("click", function() {
 			}, {
 				tasks: [task].concat(currItem.tasks)
 			});
+			$("#"+selectedId).attr("data-notifications", currItem.tasks.length + 1);
 		} else if (e.keyCode == 27) {
 			taskItem.remove();
 		}
@@ -182,6 +185,7 @@ $("#addTask").on("click", function() {
 
 function updateProjectView(project) {
 	$("#projectTitle").text(project.title);
+	$("#tasksList").empty();
 	if (project.tasks.length > 0) {
 		project.tasks.forEach(function(task) {
 			var taskItemDate = $("<div>", {
@@ -214,15 +218,13 @@ function updateProjectView(project) {
 			taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
 			$("#tasksList").append(taskItem);
 		})
-	} else {
-		$("#tasksList").empty();
 	}
 }
 
 function addProjectToMenu(project) {
 	var menuItem = $("<li>", {
 		"text": project.title,
-		"data-notification": project.tasks.length,
+		"data-notifications": project.tasks.length,
 		"id": project._id,
 		"class": "leftMenuItem"
 	});
