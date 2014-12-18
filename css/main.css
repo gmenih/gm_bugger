@@ -228,6 +228,7 @@ body,html
 	display: block;
 	height: 50pt;
 	border-left: 3pt solid #2979FF;
+	overflow: hidden;
 }
 .taskItemLeft
 {
@@ -337,20 +338,25 @@ body,html
 
 .toastMessage
 {
-	padding: 4pt 6pt;
-	background: #212121;
-	color: #f5f5f5;
-	opacity: 0.8;
-	display: block;
 	position: absolute;
-	bottom: 30pt;
-	text-align: center;
-	border-radius: 7pt;
-	left: -webkit-calc(50% - 52pt);
+	width: 60pt;
+	font-size: 12pt;
+	color: #f5f5f5;
+	background: #212121;
+	left: -webkit-calc(50% - 30pt);
+	bottom: 12pt;
 	z-index: 1000;
+	text-align: center;
+	padding: 3pt 2pt;
+	border-radius: 3pt;
 	cursor: pointer;
+	opacity: 0.6;
+	-webkit-transition: opacity 420ms;
 }
-
+.toastMessage:hover
+{
+	opacity: 1;
+}
 @-webkit-keyframes opacityOut
 {
 	from

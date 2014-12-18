@@ -1,5 +1,8 @@
 var diskdb = require('diskdb');
-
+/**
+ * Connection to database file.
+ * @type {[type]}
+ */
 var db = diskdb.connect('C:/Users/Grega/Documents/Gbase', ['projects']);
 
 /**
@@ -14,6 +17,8 @@ var projects = db.projects.find();
  */
 var selectedId = null;
 
+var selectedProject = null;
+
 // fill menu with exsisting projects
 projects.forEach(addProjectToMenu);
 
@@ -21,20 +26,22 @@ projects.forEach(addProjectToMenu);
 $("#leftMenuList").on("click", ".leftMenuItem", function() {
 		// if no item is selected yet
 		if (selectedId == null) {
+			// make selector visible, hide noContent, show projectView
 			$("#menuItemSelector").css("visibility", "visible");
 			$(".noContent").css("visibility", "hidden");
 			$(".projectView").css("visibility", "visible");
 		} else {
+			// else remove class from currently selected item
 			$(".menuItemSelected").removeClass("menuItemSelected");
 		}
 		var clicked = $(this);
 		selectedId = clicked.attr("id");
 		$("#menuItemSelector").css("top", clicked.position().top);
 		clicked.addClass("menuItemSelected");
-		var project = db.projects.findOne({
+		selectedProject = db.projects.findOne({
 			"_id": selectedId
 		});
-		updateProjectView(project);
+		updateProjectView(selectedProject);
 	})
 	// add project
 $("#addProject").on("click", function() {
@@ -127,7 +134,6 @@ $("#addTask").on("click", function() {
 		type: "todo",
 		date: dateString
 	};
-	// this is messy.. angularJs imba
 	var taskItemDate = $("<div>", {
 		"class": "taskItemRow",
 		"html": $("<span>", {
@@ -154,13 +160,15 @@ $("#addTask").on("click", function() {
 	taskItemLeft.append(taskItemDate);
 	var taskItem = $("<div>", {
 		"class": "taskItem",
-		"html": taskItemLeft
+		"html": taskItemLeft,
+		"id": "taskId" + (selectedProject.tasks.length)
 	});
 	taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
 	$("#tasksList").prepend(taskItem);
 	taskTitleEdit.select();
 	taskTitleEdit.on("keyup", function(e) {
 		if (e.keyCode == 13) {
+			console.log("triggered keyCode", e.keyCode)
 			var title = taskTitleEdit.val();
 			task.title = title;
 			var taskTitle = $("<span>", {
@@ -168,26 +176,84 @@ $("#addTask").on("click", function() {
 				"text": task.title
 			}).appendTo(taskItemRow);
 			taskTitleEdit.remove();
-			var currItem = db.projects.findOne({
-				_id: selectedId
-			});
-			db.projects.update({
+			var updated = db.projects.update({
 				_id: selectedId
 			}, {
-				tasks: [task].concat(currItem.tasks)
+				tasks: [task].concat(selectedProject.tasks)
 			});
-			$("#"+selectedId).attr("data-notifications", currItem.tasks.length + 1);
+			console.log("updated status:", updated);
+			$("#" + selectedId).attr("data-notifications", selectedProject.tasks.length + 1);
+			selectedProject = db.projects.findOne({
+				_id: selectedId
+			});
 		} else if (e.keyCode == 27) {
 			taskItem.remove();
 		}
 	});
 })
+var hiddenTasks = [];
+var timeoutCounter = null;
+$(".tasksList").on("click", ".taskItem", function() {
+	var clickedTask = $(this);
+	var taskIndex = $(this).attr("id").replace("taskId", "");
+	hiddenTasks.push({
+		element: clickedTask,
+		id: taskIndex
+	})
+	clickedTask.animate({
+		"width": "0",
+		"border-width": "0"
+	}, 420, "linear", function() {
+		$(this).animate({
+			"height": "0"
+		}, 580);
+	});
+	var toast = showToast("Task hidden. Click to undo.");
+	if (timeoutCounter != null)
+		clearTimeout(timeoutCounter);
+	timeoutCounter = initTimer(toast);
+})
+$(".appContent").on("click", ".toastMessage", function() {
+	var topElement = hiddenTasks[hiddenTasks.length - 1];
+	hiddenTasks.pop();
+	$("#taskId" + topElement.id).animate({
+		"height": "50pt",
+		"width": "90%",
+		"border-width": "3pt"
+	}, 420);
+	if (hiddenTasks.length < 1) {
+		$(this).remove();
+		clearTimeout(timeoutCounter);
+	} else {
+		clearTimeout(timeoutCounter);
+		timeoutCounter = initTimer(this);
+	}
+})
+
+function initTimer(toast) {
+	return setTimeout(function() {
+		var cpTasks = selectedProject.tasks;
+		hiddenTasks.forEach(function(task) {
+			cpTasks.splice(task.id, 1);
+			console.log("trying to remove id:", task.id);
+			task.element.remove();
+			db.projects.update({
+				_id: selectedId
+			}, {
+				tasks: cpTasks
+			});
+			$("#" + selectedId).attr("data-notifications", cpTasks.length);
+		})
+		toast.remove();
+	}, 5000);
+}
 
 function updateProjectView(project) {
 	$("#projectTitle").text(project.title);
 	$("#tasksList").empty();
 	if (project.tasks.length > 0) {
-		project.tasks.forEach(function(task) {
+		project.tasks.forEach(function(task, index) {
+			console.log(index);
 			var taskItemDate = $("<div>", {
 				"class": "taskItemRow",
 				"html": $("<span>", {
@@ -213,7 +279,8 @@ function updateProjectView(project) {
 			taskItemLeft.append(taskItemDate);
 			var taskItem = $("<div>", {
 				"class": "taskItem",
-				"html": taskItemLeft
+				"html": taskItemLeft,
+				"id": "taskId" + index
 			});
 			taskItem.append('<div class="taskItemRight"><div class="taskFinish"><div class="b1"></div><div class="b2"></div></div></div>');
 			$("#tasksList").append(taskItem);
@@ -231,4 +298,14 @@ function addProjectToMenu(project) {
 	// add item
 	menuItem.appendTo("#leftMenuList");
 	return menuItem;
+}
+
+function showToast(message) {
+	if ($(".toastMessage").length < 1)
+		return $("<div>", {
+			class: "toastMessage",
+			text: message
+		}).appendTo(".appContent");
+	else
+		return $(".toastMessage");
 }
