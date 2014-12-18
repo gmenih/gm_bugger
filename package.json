@@ -7,7 +7,7 @@
    	"width": 870,
    	"height": 550,
     "title": "NW-Bug Reporter",
-    "toolbar": true,
+    "toolbar": false,
     "resizable": true
   },
   "maintainers":[ {
