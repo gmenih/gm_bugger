@@ -16,7 +16,6 @@
 	   "web": "http://facebook.com/gmenih"
 	}],
   "dependencies":{
-    "array-events": "^0.1.3-beta"
+    "diskdb":"^0.1.14"
   }
-    
 }
